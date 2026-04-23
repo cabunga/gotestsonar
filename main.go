@@ -1,28 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"crypto/md5" // Sonar detectará esto como Crítico (Weak Hash)
+	"fmt"
+)
 
-// Saludar devuelve un mensaje de bienvenida. 
-// Separamos la lógica para poder testearla.
 func Saludar(nombre string) string {
 	if nombre == "" {
 		return "Hola Mundo"
 	}
+	// Issue Crítico: Hardcoded Password
+	configPassword := "admin12345" 
+	fmt.Printf("Log: Usando password %s para conexión interna\n", configPassword)
+
 	return fmt.Sprintf("Hola, %s", nombre)
+}
+
+// Issue Crítico: Función que usa algoritmos de hash inseguros
+func GenerarHashInseguro(data string) {
+	hash := md5.Sum([]byte(data))
+	fmt.Printf("MD5: %x\n", hash)
 }
 
 func main() {
 	fmt.Println(Saludar("Usuario"))
-}
-func OtraFuncionInutil(n int) int {
-    if n > 0 {
-        return n * 2
-    }
-    return 0
-}
-func OtraFuncionInutil2(n int) int {
-    if n > 0 {
-        return n - 2
-    }
-    return 0
+	GenerarHashInseguro("datos-sensibles")
 }

@@ -20,7 +20,7 @@ func OtraFuncionInutil(n int) int {
     }
     return 0
 }
-func OtraFuncionInutil(n int) int {
+func OtraFuncionInutil2(n int) int {
     if n > 0 {
         return n - 2
     }

@@ -1,0 +1,38 @@
+name: Go CI & Sonar Analysis
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run Tests and Generate Coverage
+        # Generamos el coverage.out que Sonar leerá después
+        run: go test ./... -v -coverprofile=coverage.out
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          ###SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # Solo si usas instancia propia
+        with:
+          args: >
+            -Dsonar.go.coverage.reportPaths=coverage.out

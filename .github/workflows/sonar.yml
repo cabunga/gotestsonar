@@ -27,6 +27,8 @@ jobs:
       - name: Run Tests and Generate Coverage
         # Generamos el coverage.out que Sonar leerá después
         run: go test ./... -v -coverprofile=coverage.out
+      - name: Debug Coverage File
+        run: head -n 5 coverage.out        
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -37,6 +39,7 @@ jobs:
             -Dsonar.organization=cabunga-github
             -Dsonar.projectKey=gamesdolnet
             -Dsonar.go.coverage.reportPaths=coverage.out
+            
       - name: SonarQube Scan
         if: false    
         uses: SonarSource/sonarqube-scan-action@v2

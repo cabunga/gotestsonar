@@ -34,7 +34,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.organization=cabunga
+            -Dsonar.organization=cabunga-github
             -Dsonar.projectKey=gamesdolnet
             -Dsonar.go.coverage.reportPaths=coverage.out
       - name: SonarQube Scan

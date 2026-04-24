@@ -33,8 +33,7 @@ runs:
       #timeout-minutes: '5'
       env:
         SONAR_TOKEN: ${{ inputs.sonarToken }}
-        # SONAR_HOST_URL: https://sonarcloud.io # Opcional para SonarCloud
- # NUEVA TAREA: Generar reporte visual en el resumen de GitHub
+   
     - name: Publish Sonar Results to Summary
       shell: bash
       if: always()

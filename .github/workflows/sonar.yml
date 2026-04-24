@@ -30,7 +30,7 @@ jobs:
       - name: Debug Coverage File
         run: head -n 5 coverage.out
       - name: Ejecutar Scan Sonar
-        uses: ./sonar
+        uses: ./.github/actions/sonar
         with:
           projectKey: 'gamesdolnet'
           # Aquí es donde mapeas el secreto del repo al input de la acción

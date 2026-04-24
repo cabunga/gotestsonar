@@ -46,7 +46,7 @@ runs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Lógica simplificada de Bash para evitar errores de evaluación de GitHub
-          if [ "$RAW_STATUS" = "OK" ]; then
+          if [ "$RAW_STATUS" = "PASSED" ]; then
              echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
              echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
              echo "| **Status** | ✅ PASSED |" >> $GITHUB_STEP_SUMMARY

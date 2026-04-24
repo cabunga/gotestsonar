@@ -39,15 +39,25 @@ runs:
       shell: bash
       if: always()
       run: |
+          # Capturamos el valor para depuración
+          RAW_STATUS="${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+          
           echo "### 📊 SonarCloud Analysis Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Status** | ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status == 'OK' && '✅ PASSED' || '❌ FAILED' }} |" >> $GITHUB_STEP_SUMMARY
+          
+          # Lógica simplificada de Bash para evitar errores de evaluación de GitHub
+          if [ "$RAW_STATUS" = "OK" ]; then
+             echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+             echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+             echo "| **Status** | ✅ PASSED |" >> $GITHUB_STEP_SUMMARY
+          else
+             echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+             echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+             echo "| **Status** | ❌ FAILED ($RAW_STATUS) |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           echo "| **Project** | [gamesdolnet](https://sonarcloud.io/dashboard?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Análisis** | [Ver en SonarCloud](https://sonarcloud.io/project/overview?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Ejecutado en el commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "| **Link** | [Ver Reporte](https://sonarcloud.io/project/overview?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
 
       # Tarea opcional: Imprime el estado en el log de GitHub Actions
     - name: "Display SonarCloud Status"

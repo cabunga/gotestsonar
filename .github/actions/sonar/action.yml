@@ -1,0 +1,29 @@
+name: 'Scan Sonar'
+description: 'Report scan code app in sonar'
+
+inputs:
+  organization:
+    description: 'organization Claro video'
+    required: false
+    default: ''
+  projectKey:
+    description: 'Name projectKey Sonar'
+    required: true
+  sonarToken:
+    description: 'Token para Sonar'
+    required: true
+
+
+runs:
+  using: 'composite'
+  steps:
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+       GITHUB_TOKEN: ${{ github.token }}
+       SONAR_TOKEN: ${{ inputs.sonarToken }}
+      with:
+        args: >
+            -Dsonar.organization=${{ inputs.organization }}
+            -Dsonar.projectKey=${{ inputs.projectKey}}
+            -Dsonar.go.coverage.reportPaths=coverage.out           

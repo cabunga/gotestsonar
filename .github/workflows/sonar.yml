@@ -28,8 +28,15 @@ jobs:
         # Generamos el coverage.out que Sonar leerá después
         run: go test ./... -v -coverprofile=coverage.out
       - name: Debug Coverage File
-        run: head -n 5 coverage.out        
+        run: head -n 5 coverage.out
+      - name: Ejecutar Scan Sonar
+        uses: ./sonar
+        with:
+          projectKey: 'gamesdolnet'
+          # Aquí es donde mapeas el secreto del repo al input de la acción
+          sonarToken: ${{ secrets.SONAR_TOKEN }}                
       - name: SonarCloud Scan
+        if: false    
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

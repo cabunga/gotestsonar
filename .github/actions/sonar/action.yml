@@ -34,6 +34,17 @@ runs:
       env:
         SONAR_TOKEN: ${{ inputs.sonarToken }}
         # SONAR_HOST_URL: https://sonarcloud.io # Opcional para SonarCloud
+    - name: Publish Sonar Results to Summary
+      if: always()
+      shell: bash
+      run: |
+        echo "### 📊 SonarCloud Analysis Results" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Status** | ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status == 'OK' && '✅ PASSED' || '❌ FAILED' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Project** | [gamesdolnet](https://sonarcloud.io/dashboard?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Ver detalles completos en [SonarCloud.io](https://sonarcloud.io/project/overview?id=gamesdolnet)" >> $GITHUB_STEP_SUMMARY
 
       # Tarea opcional: Imprime el estado en el log de GitHub Actions
     - name: "Display SonarCloud Status"

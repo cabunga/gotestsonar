@@ -26,4 +26,17 @@ runs:
         args: >
             -Dsonar.organization=${{ inputs.organization }}
             -Dsonar.projectKey=${{ inputs.projectKey}}
-            -Dsonar.go.coverage.reportPaths=coverage.out           
+            -Dsonar.go.coverage.reportPaths=coverage.out
+    - name: SonarQube Quality Gate check
+      id: sonarqube-quality-gate-check
+      uses: sonarsource/sonarqube-quality-gate-action@master      
+      #timeout-minutes: '5'
+      env:
+        SONAR_TOKEN: ${{ inputs.sonarToken }}
+        # SONAR_HOST_URL: https://sonarcloud.io # Opcional para SonarCloud
+
+      # Tarea opcional: Imprime el estado en el log de GitHub Actions
+    - name: "Display SonarCloud Status"
+      shell: bash
+      run: |
+        echo "El estado del Quality Gate es ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"           

@@ -33,6 +33,7 @@ jobs:
         uses: ./.github/actions/sonar
         with:
           projectKey: 'gamesdolnet'
+          organization: 'cabunga-github'          
           # Aquí es donde mapeas el secreto del repo al input de la acción
           sonarToken: ${{ secrets.SONAR_TOKEN }}                
       - name: SonarCloud Scan

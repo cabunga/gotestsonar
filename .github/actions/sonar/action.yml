@@ -12,7 +12,10 @@ inputs:
   sonarToken:
     description: 'Token para Sonar'
     required: true
-
+outputs:
+  SONAR_STATUS:
+    description: 'Resultado Escaneo'
+    value: ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}
 
 runs:
   using: 'composite'
@@ -54,7 +57,7 @@ runs:
              echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
              echo "| **Status** | ❌ FAILED ($RAW_STATUS) |" >> $GITHUB_STEP_SUMMARY
           fi
-          
+           echo "SONAR_STATUS=$RAW_STATUS" >> $GITHUB_OUTPUT
           echo "| **Project** | [gamesdolnet](https://sonarcloud.io/dashboard?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Link** | [Ver Reporte](https://sonarcloud.io/project/overview?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
 

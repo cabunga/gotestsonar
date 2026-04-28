@@ -2,40 +2,94 @@ name: 'Scan Sonar'
 description: 'Report scan code app in sonar'
 
 inputs:
-  organization:
-    description: 'organization Claro video'
+  ORGANIZATION:
+    description: 'ORGANIZATION Claro video'
     required: false
     default: ''
-  projectKey:
-    description: 'Name projectKey Sonar'
+  PROJECTKEY:
+    description: 'Name PROJECTKEY Sonar'
     required: true
-  sonarToken:
+  SONARTOKEN:
     description: 'Token para Sonar'
     required: true
-outputs:
-  SONAR_STATUS:
-    description: 'Resultado Escaneo'
-    value: ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}
+  LANGUAGE:
+    description: "Override de lenguaje: go|node|php. Vacio = auto-deteccion por archivos de manifiesto."
+    required: false
+    type: string
+    default: ""
+
 
 runs:
   using: 'composite'
   steps:
+    - name: Detect language
+      id: detect
+      shell: bash
+      run: |
+        set -euo pipefail
+        OVERRIDE="${{ inputs.LANGUAGE }}"
+        if [ -n "$OVERRIDE" ]; then
+          LANG="$OVERRIDE"
+          echo "Override de lenguaje: $LANG"
+        elif [ -f "go.mod" ]; then
+          LANG="go"
+        elif [ -f "package.json" ]; then
+          LANG="node"
+        elif [ -f "composer.json" ]; then
+          LANG="php"
+        else
+          echo "::error::No se pudo detectar el lenguaje (sin go.mod, package.json ni composer.json). Pase LANGUAGE como input."
+          exit 1
+        fi
+        if [ "$LANG" != "go" ] && [ "$LANG" != "node" ] && [ "$LANG" != "php" ]; then
+          echo "::error::Lenguaje no soportado: $LANG (soportados: go, node, php)"
+          exit 1
+        fi
+        echo "LANGUAGE=$LANG" >> "$GITHUB_ENV"
+        echo "language=$LANG" >> "$GITHUB_OUTPUT"
+        echo "Lenguaje resuelto: $LANG"
+    # ========== GO ==========
     - name: SonarCloud Scan
+      if: env.LANGUAGE == 'go'
       uses: SonarSource/sonarcloud-github-action@master
       env:
        GITHUB_TOKEN: ${{ github.token }}
-       SONAR_TOKEN: ${{ inputs.sonarToken }}
+       SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
       with:
         args: >
-            -Dsonar.organization=${{ inputs.organization }}
-            -Dsonar.projectKey=${{ inputs.projectKey}}
+            -Dsonar.ORGANIZATION=${{ inputs.ORGANIZATION }}
+            -Dsonar.PROJECTKEY=${{ inputs.PROJECTKEY}}
             -Dsonar.go.coverage.reportPaths=coverage.out
+    # ========== PHP ==========
+    - name: SonarCloud Scan
+      if: env.LANGUAGE == 'go'
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+       GITHUB_TOKEN: ${{ github.token }}
+       SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
+      with:
+        args: >
+            -Dsonar.ORGANIZATION=${{ inputs.ORGANIZATION }}
+            -Dsonar.PROJECTKEY=${{ inputs.PROJECTKEY}}
+            -Dsonar.php.coverage.reportPaths=./coverage.xml
+    # ========== NODE ==========
+    - name: SonarCloud Scan
+      if: env.LANGUAGE == 'go'
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+       GITHUB_TOKEN: ${{ github.token }}
+       SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
+      with:
+        args: >
+            -Dsonar.ORGANIZATION=${{ inputs.ORGANIZATION }}
+            -Dsonar.PROJECTKEY=${{ inputs.PROJECTKEY}}
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+
     - name: SonarQube Quality Gate check
       id: sonarqube-quality-gate-check
-      uses: sonarsource/sonarqube-quality-gate-action@master      
-      #timeout-minutes: '5'
+      uses: sonarsource/sonarqube-quality-gate-action@master         
       env:
-        SONAR_TOKEN: ${{ inputs.sonarToken }}
+        SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
    
     - name: Publish Sonar Results to Summary
       shell: bash
@@ -57,12 +111,7 @@ runs:
              echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
              echo "| **Status** | ❌ FAILED ($RAW_STATUS) |" >> $GITHUB_STEP_SUMMARY
           fi
-           echo "SONAR_STATUS=$RAW_STATUS" >> $GITHUB_OUTPUT
+          
           echo "| **Project** | [gamesdolnet](https://sonarcloud.io/dashboard?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Link** | [Ver Reporte](https://sonarcloud.io/project/overview?id=gamesdolnet) |" >> $GITHUB_STEP_SUMMARY
 
-      # Tarea opcional: Imprime el estado en el log de GitHub Actions
-    - name: "Display SonarCloud Status"
-      shell: bash
-      run: |
-        echo "El estado del Quality Gate es ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"           

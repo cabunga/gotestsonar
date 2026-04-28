@@ -57,8 +57,8 @@ runs:
        SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
       with:
         args: >
-            -Dsonar.ORGANIZATION=${{ inputs.ORGANIZATION }}
-            -Dsonar.PROJECTKEY=${{ inputs.PROJECTKEY}}
+            -Dsonar.organization=${{ inputs.ORGANIZATION }}
+            -Dsonar.projectKey=${{ inputs.PROJECTKEY}}
             -Dsonar.go.coverage.reportPaths=coverage.out
     # ========== PHP ==========
     - name: SonarCloud Scan
@@ -69,8 +69,8 @@ runs:
        SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
       with:
         args: >
-            -Dsonar.ORGANIZATION=${{ inputs.ORGANIZATION }}
-            -Dsonar.PROJECTKEY=${{ inputs.PROJECTKEY}}
+            -Dsonar.organization=${{ inputs.ORGANIZATION }}
+            -Dsonar.projectKey=${{ inputs.PROJECTKEY}}
             -Dsonar.php.coverage.reportPaths=./coverage.xml
     # ========== NODE ==========
     - name: SonarCloud Scan
@@ -81,8 +81,8 @@ runs:
        SONAR_TOKEN: ${{ inputs.SONARTOKEN }}
       with:
         args: >
-            -Dsonar.ORGANIZATION=${{ inputs.ORGANIZATION }}
-            -Dsonar.PROJECTKEY=${{ inputs.PROJECTKEY}}
+            -Dsonar.organization=${{ inputs.ORGANIZATION }}
+            -Dsonar.projectKey=${{ inputs.PROJECTKEY}}
             -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
 
     - name: SonarQube Quality Gate check

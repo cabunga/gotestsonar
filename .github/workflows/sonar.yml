@@ -32,10 +32,10 @@ jobs:
       - name: Ejecutar Scan Sonar
         uses: ./.github/actions/sonar
         with:
-          projectKey: 'gamesdolnet'
-          organization: 'cabunga-github'          
+          PROJECTKEY: 'gamesdolnet'
+          ORGANIZATION: 'cabunga-github'          
           # Aquí es donde mapeas el secreto del repo al input de la acción
-          sonarToken: ${{ secrets.SONAR_TOKEN }}                
+          SONARTOKEN: ${{ secrets.SONAR_TOKEN }}                
       - name: SonarCloud Scan
         if: false    
         uses: SonarSource/sonarcloud-github-action@master
